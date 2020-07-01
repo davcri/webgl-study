@@ -1,0 +1,28 @@
+{
+  "name": "webgl",
+  "version": "1.0.0",
+  "description": "Source code created while studying the *WebGL Programming Guide* book.",
+  "main": "index.js",
+  "scripts": {
+    "start": "live-server --open=./src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davcri/webgl-study.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/davcri/webgl-study/issues"
+  },
+  "homepage": "https://github.com/davcri/webgl-study#readme",
+  "dependencies": {
+    "live-server": "^1.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2"
+  }
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<head>
+    <title>Draw a Point - ES6 OOP - WebGL App </title>
+    <link rel="stylesheet" href="/src/css/main.css">
+</head>
+<body>
+    <canvas id="canvas">
+    </canvas>
+    
+    <div class="notes">
+        <h2>Notes</h2>
+        <p>
+            This example is the same as the previous, but it takes advantage of
+            WebGLApp, an utility ES6 class that I created to take care of common tasks.
+        </p>
+
+        <p>
+            WebGLApp (<a href="https://github.com/davcri/webgl-study/blob/master/src/libs/mgu/webgl-app.js">src/libs/mgu/webgl-app.js</a>):
+            <ul>
+                <li>
+                    Loads shaders (configurable)
+                </li>
+                <li>
+                    Registers the canvas element to draw on (configurable)
+                </li>
+                <li>
+                    Provideds a WebGL context
+                </li>
+                <li>
+                    Provideds a game loop with delta time
+                </li>
+            </ul>
+        </p>
+    </div>
+
+    <script onload src="/src/libs/webgl-utils.js"></script>
+    <script onload src="/src/libs/webgl-debug.js"></script>
+    <script onload type="module" src="./index.js"></script>
+</body>
+</html>
