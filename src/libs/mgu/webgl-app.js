@@ -8,27 +8,54 @@ export default class WebGLApp {
     /**
      * @type HTMLCanvasElement
      */
-    this.canvas = document.getElementById(canvasId);
-    this.canvas.setAttribute('width', 600);
-    this.canvas.setAttribute('height', 600);
+    this.canvas = this.initCanvas(canvasId);
+    /**
+     * @type HTMLBodyElement
+     */
+    this.body = this.initBody();
+    /**
+     * @type WebGLRenderingContext
+     */
+    this.gl = this.initGl(this.canvas);
+    /**
+     * @type ShaderLoader
+     */
+    this.shaderLoader = new ShaderLoader(shaderFiles);
 
-    this.body = document.getElementsByTagName('body').item(0);
-    this.body.style.backgroundColor = bodyBgColor;
+    this.time = 0; // ms
+    this.previousTime = 0; // ms
+    this.delta = 0; // seconds
 
-    document.title = this.getTitleByCurrentURL();
+    this.setup();
+  }
 
-    this.gl = getWebGLContext(this.canvas);
-    if (!this.gl) {
-      console.error('WebGL context not initialized.');
-    }
-
-    const shaderLoader = new ShaderLoader(shaderFiles);
-    shaderLoader.onShaderLoaded = this.onShaderLoaded.bind(this);
-    this.shaderLoader = shaderLoader;
-
+  setup() {
     this.time = Date.now(); // ms
     this.previousTime = this.time; // ms
     this.delta = 0; // seconds
+    this.shaderLoader.onShaderLoaded = this.onShaderLoaded.bind(this);
+    document.title = this.getTitleByCurrentURL();
+  }
+
+  initCanvas(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    canvas.setAttribute('width', 600);
+    canvas.setAttribute('height', 600);
+    return canvas;
+  }
+
+  initBody() {
+    const body = document.getElementsByTagName('body').item(0);
+    body.style.backgroundColor = bodyBgColor;
+    return body;
+  }
+
+  initGl(canvas) {
+    const gl = getWebGLContext(canvas);
+    if (!gl) {
+      console.error('WebGL context not initialized.');
+    }
+    return gl;
   }
 
   start() {
