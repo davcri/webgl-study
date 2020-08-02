@@ -67,7 +67,7 @@ export default class WebGLApp {
 
   getTitleByCurrentURL() {
     let pathArray = window.location.pathname.split('/');
-    pathArray = pathArray.filter(el => el !== "");
+    pathArray = pathArray.filter((el) => el !== '');
     return pathArray[pathArray.length - 1];
   }
 }
