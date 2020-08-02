@@ -49,6 +49,7 @@ I wanted some quality of life features while studying WebGL, so I added:
 
 ## Resources
 
+- Book sources - https://github.com/Lapsec/webgl-programming-guide-source-code
 - https://www.khronos.org/registry/webgl/specs/1.0.3/
 - https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API
 - [MDN Transformation matrices](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Matrix_math_for_the_web)
