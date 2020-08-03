@@ -4,7 +4,7 @@ import ShaderLoader from './shader-loader.js';
 const SHADER_FILES = ['shaders/shader.vert', 'shaders/shader.frag'];
 
 export default class WebGLApp {
-  constructor({ canvasId = 'canvas', shaderFiles = SHADER_FILES, bodyBgColor = 'light\gray' } = {}) {
+  constructor({ canvasId = 'canvas', shaderFiles = SHADER_FILES, bodyBgColor = 'lightgray' } = {}) {
     /**
      * @type HTMLCanvasElement
      */
@@ -12,7 +12,7 @@ export default class WebGLApp {
     /**
      * @type HTMLBodyElement
      */
-    this.body = this.initBody();
+    this.body = this.initBody(bodyBgColor);
     /**
      * @type WebGLRenderingContext
      */
@@ -44,7 +44,7 @@ export default class WebGLApp {
     return canvas;
   }
 
-  initBody() {
+  initBody(bodyBgColor) {
     const body = document.getElementsByTagName('body').item(0);
     body.style.backgroundColor = bodyBgColor;
     return body;
