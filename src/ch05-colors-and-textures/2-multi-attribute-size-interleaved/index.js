@@ -16,21 +16,18 @@ class App extends WebGLApp {
     const positionOffset = 0;
     const pointSizeOffset = 2 * verticesData.BYTES_PER_ELEMENT;
 
-    const a_Position = this.gl.getAttribLocation(this.gl.program, 'a_Position');
-    if (a_Position < 0) console.error('Failed to get attribute');
     const vertexBuffer = this.gl.createBuffer();
     if (!vertexBuffer) console.error('Failed to create vertex buffer.');
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, vertexBuffer);
     this.gl.bufferData(this.gl.ARRAY_BUFFER, verticesData, this.gl.STATIC_DRAW);
+
+    const a_Position = this.gl.getAttribLocation(this.gl.program, 'a_Position');
+    if (a_Position < 0) console.error('Failed to get attribute');
     this.gl.vertexAttribPointer(a_Position, 2, this.gl.FLOAT, false, stride, positionOffset);
     this.gl.enableVertexAttribArray(a_Position);
 
     const a_PointSize = this.gl.getAttribLocation(this.gl.program, 'a_PointSize');
     if (a_PointSize < 0) console.error('Failed to get attribute');
-    const sizeBuffer = this.gl.createBuffer();
-    if (!sizeBuffer) console.error('Failed to initialize buffer');
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, sizeBuffer);
-    this.gl.bufferData(this.gl.ARRAY_BUFFER, verticesData, this.gl.STATIC_DRAW);
     this.gl.vertexAttribPointer(a_PointSize, 1, this.gl.FLOAT, false, stride, pointSizeOffset);
     this.gl.enableVertexAttribArray(a_PointSize);
 

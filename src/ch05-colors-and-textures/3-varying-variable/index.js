@@ -16,21 +16,18 @@ class App extends WebGLApp {
     const positionOffset = 0;
     const colorOffset = 2 * verticesData.BYTES_PER_ELEMENT;
 
-    const a_Color = this.gl.getAttribLocation(this.gl.program, 'a_Color');
-    if (a_Color < 0) console.error('Failed to get attribute');
-    const a_Position = this.gl.getAttribLocation(this.gl.program, 'a_Position');
-    if (a_Position < 0) console.error('Failed to get attribute');
     const vertexBuffer = this.gl.createBuffer();
     if (!vertexBuffer) console.error('Failed to create vertex buffer.');
-
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, vertexBuffer);
+
+    const a_Position = this.gl.getAttribLocation(this.gl.program, 'a_Position');
+    if (a_Position < 0) console.error('Failed to get attribute');
     this.gl.bufferData(this.gl.ARRAY_BUFFER, verticesData, this.gl.STATIC_DRAW);
     this.gl.vertexAttribPointer(a_Position, 2, this.gl.FLOAT, false, stride, positionOffset);
     this.gl.enableVertexAttribArray(a_Position);
 
-    const sizeBuffer = this.gl.createBuffer();
-    if (!sizeBuffer) console.error('Failed to initialize buffer');
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, sizeBuffer);
+    const a_Color = this.gl.getAttribLocation(this.gl.program, 'a_Color');
+    if (a_Color < 0) console.error('Failed to get attribute');
     this.gl.bufferData(this.gl.ARRAY_BUFFER, verticesData, this.gl.STATIC_DRAW);
     this.gl.vertexAttribPointer(a_Color, 3, this.gl.FLOAT, false, stride, colorOffset);
     this.gl.enableVertexAttribArray(a_Color);
