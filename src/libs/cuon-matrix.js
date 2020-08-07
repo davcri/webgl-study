@@ -36,6 +36,10 @@ export default class Matrix4 {
     }
   }
 
+  multiply(other) {
+    return this.concat(other);
+  }
+
   /**
  * Set the identity matrix.
  * @return this
@@ -99,6 +103,7 @@ export default class Matrix4 {
 
     return this;
   }
+
 
   /**
    * Multiply the three-dimensional vector.
