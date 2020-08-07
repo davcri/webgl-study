@@ -23,7 +23,7 @@ class App extends WebGLApp {
     const u_ViewMatrix = this.u_ViewMatrix = this.getUniformLocation('u_ViewMatrix');
     const viewMatrix = new Matrix4();
     const eye = new Vector4(0.2, 0.2, 0.25);
-    const center = new Vector4(0, 1, 0);
+    const center = new Vector4(0, 0, 0); // look at point
     const up = new Vector4(0, 1, 0);
     this.eye = eye;
     this.center = center;
@@ -52,9 +52,9 @@ class App extends WebGLApp {
       0.5, -0.5, -0.4, 1.0, 1.0, 0.0,
     ];
     const triangle2 = [
-      0.5, 0.4, -0.2, 1.0, 0.4, 0.4,
-      -0.5, 0.4, -0.2, 1.0, 1.0, 0.4,
-      0.0, -0.6, -0.2, 1.0, 1.0, 0.4,
+      0.5, 0.4, 0.2, 1.0, 0.4, 0.4,
+      -0.5, 0.4, 0.2, 1.0, 1.0, 0.4,
+      0.0, -0.6, 0.2, 1.0, 1.0, 0.4,
     ];
     return new Float32Array([
       // vec3, vec3 rgb 
@@ -64,8 +64,10 @@ class App extends WebGLApp {
   }
 
   process() {
-    this.eye.z = Math.sin(this.time / 2000);
-    this.eye.y = Math.cos(this.time / 2000);
+    const period = 1000;
+    this.eye.x = this.center.x + 0.2 * Math.sin(this.time / period);
+    this.eye.y = this.center.y + 0.2 * Math.cos(this.time / period);
+    this.eye.z = this.center.z + 0.2 * Math.sin(this.time / period);
 
     this.viewMatrix.setLookAt(this.eye.x, this.eye.y, this.eye.z,
       this.center.x, this.center.y, this.center.z,
