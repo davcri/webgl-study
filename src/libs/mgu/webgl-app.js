@@ -97,4 +97,16 @@ export default class WebGLApp {
     pathArray = pathArray.filter((el) => el !== '');
     return pathArray[pathArray.length - 1];
   }
+
+  getAttribLocation(attribName) {
+    const attr = this.gl.getAttribLocation(this.gl.program, attribName);
+    if (attr < 0) console.error('Failed to get ' + attr);
+    return attr;
+  }
+
+  getUniformLocation(uniformName) {
+    const uniform = this.gl.getUniformLocation(this.gl.program, uniformName);
+    if (uniform < 0) console.error('Failed to get ' + uniformName);
+    return uniform;
+  }
 }
