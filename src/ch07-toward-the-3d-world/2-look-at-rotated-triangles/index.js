@@ -25,9 +25,17 @@ class App extends WebGLApp {
     const eye = new Vector4(0.2, 0.2, 0.25);
     const center = new Vector4(0, 0, 0); // look at point
     const up = new Vector4(0, 1, 0);
+    this.eye = eye;
+    this.center = center;
+    this.up = up;
     this.viewMatrix = viewMatrix;
     viewMatrix.setLookAt(eye.x, eye.y, eye.z, center.x, center.y, center.z, up.x, up.y, up.z);
     this.gl.uniformMatrix4fv(u_ViewMatrix, false, viewMatrix.elements);
+
+    const u_ModelMatrix = this.u_ModelMatrix = this.getUniformLocation('u_ModelMatrix');
+    this.modelMatrix = new Matrix4();
+    this.modelMatrix.setRotate(-10, 0, 0, 1);
+    this.gl.uniformMatrix4fv(u_ModelMatrix, false, this.modelMatrix.elements);
 
     const a_Position = this.getAttribLocation('a_Position');
     this.gl.bufferData(this.gl.ARRAY_BUFFER, verticesData, this.gl.STATIC_DRAW);
@@ -61,17 +69,17 @@ class App extends WebGLApp {
   }
 
   process() {
-    // const period = 1000;
-    // this.eye.x = this.center.x + 0.2 * Math.sin(this.time / period);
-    // this.eye.y = this.center.y + 0.2 * Math.cos(this.time / period);
-    // this.eye.z = this.center.z + 0.2 * Math.sin(this.time / period);
+    const period = 1000;
 
-    // this.viewMatrix.setLookAt(this.eye.x, this.eye.y, this.eye.z,
-    //   this.center.x, this.center.y, this.center.z,
-    //   this.up.x, this.up.y, this.up.z);
-    // this.gl.uniformMatrix4fv(this.u_ViewMatrix, false, this.viewMatrix.elements);
-    // this.gl.clear(this.gl.COLOR_BUFFER_BIT);
-    // this.gl.drawArrays(this.gl.TRIANGLES, 0, this.n);
+    this.modelMatrix.setRotate(-100 * Math.sin(this.time / period), 0, 0, 1);
+    this.gl.uniformMatrix4fv(this.u_ModelMatrix, false, this.modelMatrix.elements);
+
+    this.viewMatrix.setLookAt(this.eye.x, this.eye.y, this.eye.z,
+      this.center.x, this.center.y, this.center.z,
+      this.up.x, this.up.y, this.up.z);
+    this.gl.uniformMatrix4fv(this.u_ViewMatrix, false, this.viewMatrix.elements);
+    this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+    this.gl.drawArrays(this.gl.TRIANGLES, 0, this.n);
   }
 }
 
