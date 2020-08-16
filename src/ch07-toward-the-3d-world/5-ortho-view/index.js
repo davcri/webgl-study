@@ -1,6 +1,5 @@
 import WebGLApp from '../../libs/mgu/webgl-app.js';
 import Matrix4 from '../../libs/cuon-matrix.js';
-import Vector4 from '../../libs/mgu/vector4.js';
 
 class App extends WebGLApp {
   ready() {
@@ -42,14 +41,14 @@ class App extends WebGLApp {
 
   static initVertices() {
     const triangle1 = [
-      0.0, 0.5, 1.0, 1.0, 1.0, 1.0,
-      -0.5, -0.5, 1.0, 0.0, 1.0, 0.0,
-      0.5, -0.5, 1.0, 1.0, 1.0, 0.0,
+      0.0, 0.5, 0.2, 1.0, 1.0, 1.0,
+      -0.5, -0.5, 0.2, 0.0, 1.0, 0.0,
+      0.5, -0.5, 0.2, 1.0, 1.0, 0.0,
     ];
     const triangle2 = [
-      0.5, 0.4, 0.6, 1.0, 0.4, 0.4,
-      -0.5, 0.4, 0.6, 1.0, 1.0, 0.4,
-      0.0, -0.6, 0.6, 1.0, 1.0, 0.4,
+      0.5, 0.4, 0.3, 1.0, 0.4, 0.4,
+      -0.5, 0.4, 0.3, 1.0, 1.0, 0.4,
+      0.0, -0.6, 0.3, 1.0, 1.0, 0.4,
     ];
     return new Float32Array([
       // vec3, vec3 rgb
