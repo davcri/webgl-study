@@ -10,8 +10,7 @@ class App extends WebGLApp {
     this.registerOnKeyDown();
 
     const verticesData = App.initVertices();
-    const n = 6;
-    this.n = n;
+    this.n = 6; // vertices
 
     // see "stride" and "offset" here: https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/vertexAttribPointer
     const stride = 6 * verticesData.BYTES_PER_ELEMENT;
@@ -49,7 +48,7 @@ class App extends WebGLApp {
     this.gl.vertexAttribPointer(a_Color, 3, this.gl.FLOAT, false, stride, colorOffset);
     this.gl.enableVertexAttribArray(a_Color);
 
-    this.gl.drawArrays(this.gl.TRIANGLES, 0, n);
+    this.gl.drawArrays(this.gl.TRIANGLES, 0, this.n);
   }
 
   static initVertices() {
@@ -73,7 +72,7 @@ class App extends WebGLApp {
   registerOnKeyDown() {
     document.onkeydown = (ev) => {
       this.onKeyDown(ev);
-    }
+    };
   }
 
   onKeyDown(ev) {
