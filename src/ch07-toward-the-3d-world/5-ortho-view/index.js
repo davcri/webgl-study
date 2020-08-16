@@ -28,7 +28,7 @@ class App extends WebGLApp {
 
     const a_Position = this.getAttribLocation('a_Position');
     this.gl.bufferData(this.gl.ARRAY_BUFFER, verticesData, this.gl.STATIC_DRAW);
-    this.gl.vertexAttribPointer(a_Position, 2, this.gl.FLOAT, false, stride, positionOffset);
+    this.gl.vertexAttribPointer(a_Position, 3, this.gl.FLOAT, false, stride, positionOffset);
     this.gl.enableVertexAttribArray(a_Position);
 
     const a_Color = this.getAttribLocation('a_Color');
@@ -42,14 +42,14 @@ class App extends WebGLApp {
 
   static initVertices() {
     const triangle1 = [
-      0.0, 0.5, -0.4, 1.0, 1.0, 1.0,
-      -0.5, -0.5, -0.4, 0.0, 1.0, 0.0,
-      0.5, -0.5, -0.4, 1.0, 1.0, 0.0,
+      0.0, 0.5, 1.0, 1.0, 1.0, 1.0,
+      -0.5, -0.5, 1.0, 0.0, 1.0, 0.0,
+      0.5, -0.5, 1.0, 1.0, 1.0, 0.0,
     ];
     const triangle2 = [
-      0.5, 0.4, 0.2, 1.0, 0.4, 0.4,
-      -0.5, 0.4, 0.2, 1.0, 1.0, 0.4,
-      0.0, -0.6, 0.2, 1.0, 1.0, 0.4,
+      0.5, 0.4, 0.6, 1.0, 0.4, 0.4,
+      -0.5, 0.4, 0.6, 1.0, 1.0, 0.4,
+      0.0, -0.6, 0.6, 1.0, 1.0, 0.4,
     ];
     return new Float32Array([
       // vec3, vec3 rgb
@@ -93,7 +93,7 @@ class App extends WebGLApp {
       nearPlane = ${Math.round(this.nearPlane * 100) / 100} <br>
       farPlane = ${Math.round(this.farPlane * 100) / 100}`;
 
-    this.projMatrix = this.projMatrix.setOrtho(-1, 1, 1, -1, this.nearPlane, this.farPlane);
+    this.projMatrix = this.projMatrix.setOrtho(-1.0, 1.0, -1.0, 1.0, this.nearPlane, this.farPlane);
     this.gl.uniformMatrix4fv(this.u_ProjMatrix, false, this.projMatrix.elements);
 
     this.gl.clear(this.gl.COLOR_BUFFER_BIT);

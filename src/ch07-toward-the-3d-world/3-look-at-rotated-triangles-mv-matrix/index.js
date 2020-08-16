@@ -39,7 +39,7 @@ class App extends WebGLApp {
 
     const a_Position = this.getAttribLocation('a_Position');
     this.gl.bufferData(this.gl.ARRAY_BUFFER, verticesData, this.gl.STATIC_DRAW);
-    this.gl.vertexAttribPointer(a_Position, 2, this.gl.FLOAT, false, stride, positionOffset);
+    this.gl.vertexAttribPointer(a_Position, 3, this.gl.FLOAT, false, stride, positionOffset);
     this.gl.enableVertexAttribArray(a_Position);
 
     const a_Color = this.getAttribLocation('a_Color');
