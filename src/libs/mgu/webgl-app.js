@@ -109,4 +109,11 @@ export default class WebGLApp {
     if (uniform < 0) console.error(`Failed to get ${uniformName}`);
     return uniform;
   }
+
+  createBuffer() {
+    const buf = this.gl.createBuffer();
+    if (!buf) console.error('Failed to create buffer.');
+    // this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buf);
+    return buf;
+  }
 }
