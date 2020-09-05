@@ -7,9 +7,7 @@ class App extends WebGLApp {
     this.registerOnKeyDown();
     this.addNotes();
 
-    this.u_ProjMatrix = this.getUniformLocation('u_ProjMatrix');
-    this.u_ViewMatrix = this.getUniformLocation('u_ViewMatrix');
-    this.u_ModelMatrix = this.getUniformLocation('u_ModelMatrix');
+    this.u_MvpMatrix = this.getUniformLocation('u_MvpMatrix');
     const vertexBuffer = this.createBuffer();
 
     this.perspectiveMode = true;
@@ -117,18 +115,17 @@ class App extends WebGLApp {
       this.projMatrix = this.projMatrix.setOrtho(-1, 1, -1, 1, -10, 22);
     }
 
-    this.modelMatrix.translate(-1, 0, 0);
-
-    this.gl.uniformMatrix4fv(this.u_ViewMatrix, false, this.viewMatrix.elements);
-    this.gl.uniformMatrix4fv(this.u_ProjMatrix, false, this.projMatrix.elements);
-    this.gl.uniformMatrix4fv(this.u_ModelMatrix, false, this.modelMatrix.elements);
+    this.mvpMatrix = this.projMatrix.multiply(this.viewMatrix).multiply(this.modelMatrix);
+    this.mvpMatrix.translate(-1, 0, 0);
+    this.gl.uniformMatrix4fv(this.u_MvpMatrix, false, this.mvpMatrix.elements);
 
     // draw
     this.gl.clear(this.gl.COLOR_BUFFER_BIT);
     this.gl.drawArrays(this.gl.TRIANGLES, 0, this.n);
 
-    this.modelMatrix.translate(1, 0, 0);
-    this.gl.uniformMatrix4fv(this.u_ModelMatrix, false, this.modelMatrix.elements);
+    this.mvpMatrix.translate(1, 0, 0);
+
+    this.gl.uniformMatrix4fv(this.u_MvpMatrix, false, this.mvpMatrix.elements);
 
     this.gl.drawArrays(this.gl.TRIANGLES, 0, this.n);
   }
