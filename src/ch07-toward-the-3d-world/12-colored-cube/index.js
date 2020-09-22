@@ -157,7 +157,7 @@ class App extends WebGLApp {
 
   addNotes() {
     const el = document.getElementsByClassName('notes').item(0);
-    el.innerHTML = 'Press left/right arrow to rotate the cube.';
+    el.innerHTML = 'Press left/right/top/down arrows to rotate the cube.';
   }
 }
 
