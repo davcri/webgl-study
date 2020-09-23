@@ -100,7 +100,7 @@ export default class WebGLApp {
 
   getAttribLocation(attribName) {
     const attr = this.gl.getAttribLocation(this.gl.program, attribName);
-    if (attr < 0) console.error(`Failed to get ${attr}`);
+    if (attr < 0) console.error(`Failed to get ${attribName}`);
     return attr;
   }
 

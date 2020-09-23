@@ -2,28 +2,17 @@ import WebGLApp from '../../libs/mgu/webgl-app.js';
 import Matrix4 from '../../libs/cuon-matrix.js';
 import Vector4 from '../../libs/mgu/vector4.js';
 import { COLORS } from '../../libs/mgu/color.js';
+import Vector3 from '../../libs/cuon-vec3.js';
 
 class App extends WebGLApp {
   ready() {
-    const { vertices, colors, indices } = App.initVertices();
+    const {
+      vertices, normals, colors, indices,
+    } = App.initVertices();
     this.n = indices.length; // vertices
 
-    let bufferInited = this.initArrayBuffer({
-      data: vertices,
-      attribute: 'a_Position',
-      num: 3,
-    });
-    if (!bufferInited) console.error('Error while creating buffer');
-    bufferInited = this.initArrayBuffer({
-      data: colors,
-      attribute: 'a_Color',
-      num: 3,
-    });
-    if (!bufferInited) console.error('Error while creating buffer');
-
-    const indexBuffer = this.createBuffer();
-    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, indices, this.gl.STATIC_DRAW);
+    this.setupShaderParams(vertices, normals, colors, indices);
+    this.setupLights();
 
     // MVP stuff
     this.u_MvpMatrix = this.getUniformLocation('u_MvpMatrix');
@@ -52,6 +41,36 @@ class App extends WebGLApp {
     this.addNotes();
   }
 
+  setupShaderParams(vertices, normals, colors, indices) {
+    this.initArrayBuffer({
+      data: vertices,
+      attribute: 'a_Position',
+      num: 3,
+    });
+    this.initArrayBuffer({
+      data: normals,
+      attribute: 'a_Normal',
+      num: 3,
+    });
+    this.initArrayBuffer({
+      data: colors,
+      attribute: 'a_Color',
+      num: 3,
+    });
+    const indexBuffer = this.createBuffer();
+    this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, indices, this.gl.STATIC_DRAW);
+  }
+
+  setupLights() {
+    const u_LightColor = this.getUniformLocation('u_LightColor');
+    const u_LightDirection = this.getUniformLocation('u_LightDirection');
+    this.gl.uniform3f(u_LightColor, 1.0, 1.0, 1.0);
+    const lightDirection = new Vector3([0.6, 0.5, 3.0]);
+    lightDirection.normalize();
+    this.gl.uniform3fv(u_LightDirection, lightDirection.elements);
+  }
+
   registerOnKeyDown() {
     document.onkeydown = (ev) => {
       this.onKeyDown(ev);
@@ -67,7 +86,7 @@ class App extends WebGLApp {
     const a_attribute = this.getAttribLocation(attribute);
     this.gl.vertexAttribPointer(a_attribute, num, type, false, stride, positionOffset);
     this.gl.enableVertexAttribArray(a_attribute);
-    return true;
+    return a_attribute != -1;
   }
 
   onKeyDown(ev) {
@@ -76,18 +95,14 @@ class App extends WebGLApp {
     const KEY_UP = 38;
     const KEY_DOWN = 40;
     if (ev.keyCode === KEY_UP) {
-      this.modelMatrix.rotate(5, 0, 0, 1);
     }
     if (ev.keyCode === KEY_DOWN) {
-      this.modelMatrix.rotate(-5, 0, 0, 1);
     }
     if (ev.keyCode === KEY_RIGHT) {
-      this.modelMatrix.rotate(5, 0, 1, 0);
     }
     if (ev.keyCode === KEY_LEFT) {
-      this.modelMatrix.rotate(-5, 0, 1, 0);
     }
-    this.draw();
+    // this.draw();
   }
 
   draw() {
@@ -123,13 +138,22 @@ class App extends WebGLApp {
       1.0, -1.0, -1.0,  -1.0, -1.0, -1.0,  -1.0, 1.0, -1.0,   1.0, 1.0, -1.0, // v4-v7-v6-v5 back
     ]);
 
+    const normals = new Float32Array([    // Normal
+      0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,  // v0-v1-v2-v3 front
+      1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,  // v0-v3-v4-v5 right
+      0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,  // v0-v5-v6-v1 up
+      -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  // v1-v6-v7-v2 left
+      0.0, -1.0, 0.0,   0.0, -1.0, 0.0,   0.0, -1.0, 0.0,   0.0, -1.0, 0.0,  // v7-v4-v3-v2 down
+      0.0, 0.0, -1.0,   0.0, 0.0, -1.0,   0.0, 0.0, -1.0,   0.0, 0.0, -1.0,   // v4-v7-v6-v5 back
+    ]);
+
     const colors = new Float32Array([     // Colors
       ...COLORS.red,  ...COLORS.red,  ...COLORS.red,  ...COLORS.red,  // v0-v1-v2-v3 front(white)
-      ...COLORS.yellow,  ...COLORS.yellow,  ...COLORS.yellow,  ...COLORS.yellow,  // v0-v3-v4-v5 right(white)
-      ...COLORS.magenta,  ...COLORS.magenta,  ...COLORS.magenta,  ...COLORS.magenta,  // v0-v5-v6-v1 up(white)
-      ...COLORS.blue,  ...COLORS.blue,  ...COLORS.blue,  ...COLORS.blue,  // v1-v6-v7-v2 left(white)
-      ...COLORS.cyan,  ...COLORS.cyan,  ...COLORS.cyan,  ...COLORS.cyan,  // v7-v4-v3-v2 down(white)
-      ...COLORS.white,  ...COLORS.white,  ...COLORS.white,  ...COLORS.white,   // v4-v7-v6-v5 back(white)
+      ...COLORS.red,  ...COLORS.red,  ...COLORS.red,  ...COLORS.red,  // v0-v3-v4-v5 right(white)
+      ...COLORS.red,  ...COLORS.red,  ...COLORS.red,  ...COLORS.red,  // v0-v5-v6-v1 up(white)
+      ...COLORS.red,  ...COLORS.red,  ...COLORS.red,  ...COLORS.red,  // v1-v6-v7-v2 left(white)
+      ...COLORS.red,  ...COLORS.red,  ...COLORS.red,  ...COLORS.red,  // v7-v4-v3-v2 down(white)
+      ...COLORS.red,  ...COLORS.red,  ...COLORS.red,  ...COLORS.red,   // v4-v7-v6-v5 back(white)
     ]);
 
     const indices = new Uint8Array([
@@ -140,24 +164,25 @@ class App extends WebGLApp {
       16, 17, 18,  16, 18, 19,    // down
       20, 21, 22,  20, 22, 23,     // back
     ]);
+
     /* eslint-enable no-multi-spaces */
     return {
       vertices,
+      normals,
       colors,
       indices,
     };
   }
 
   process() {
-    // this.eye.x = 1 * Math.sin(this.time / 1000);
-    // this.eye.y = -1 * Math.sin(this.time / 2000);
-
-    // this.draw();
+    this.eye.x = 10 * Math.sin(this.time / 2000);
+    this.eye.y = 3 * Math.sin(this.time / 2000);
+    this.draw();
   }
 
   addNotes() {
     const el = document.getElementsByClassName('notes').item(0);
-    el.innerHTML = 'Press left/right/top/down arrows to rotate the cube.';
+    el.innerHTML = '';
   }
 }
 
