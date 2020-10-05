@@ -33,7 +33,7 @@ class App extends WebGLApp {
     this.nearPlane = 0.0;
     this.farPlane = 50.0;
 
-    this.eye = new Vector4(0, 10, 50);
+    this.eye = new Vector4(20, 10, 30);
     this.center = new Vector4(0, 0, 0); // look at point
     this.up = new Vector4(0, 1, 0);
     this.viewMatrix.setLookAt(
@@ -124,10 +124,14 @@ class App extends WebGLApp {
     const ANGLE_STEP = 3.0; // The increments of rotation angle (degrees)
 
     if (ev.keyCode === KEY_UP) {
-      if (this.g_joint1Angle < 135.0) this.g_joint1Angle += ANGLE_STEP;
+      if (this.g_joint1Angle < 135.0) {
+        this.g_joint1Angle += ANGLE_STEP;
+      }
     }
     if (ev.keyCode === KEY_DOWN) {
-      if (this.g_joint1Angle > -135.0) this.g_joint1Angle -= ANGLE_STEP;
+      if (this.g_joint1Angle > -135.0) {
+        this.g_joint1Angle -= ANGLE_STEP;
+      }
     }
     if (ev.keyCode === KEY_RIGHT) {
       this.g_arm1Angle = (this.g_arm1Angle + ANGLE_STEP) % 360;
@@ -136,10 +140,10 @@ class App extends WebGLApp {
       this.g_arm1Angle = (this.g_arm1Angle - ANGLE_STEP) % 360;
     }
 
-    if (ev.keyCod === 90) { // 'ｚ'key -> the positive rotation of joint2
+    if (ev.keyCode === 90) { // 'ｚ'key -> the positive rotation of joint2
       this.g_joint2Angle = (this.g_joint2Angle + ANGLE_STEP) % 360;
     }
-    if (ev.keyCod === 88) { // 'x'key -> the negative rotation of joint2
+    if (ev.keyCode === 88) { // 'x'key -> the negative rotation of joint2
       this.g_joint2Angle = (this.g_joint2Angle - ANGLE_STEP) % 360;
     }
     if (ev.keyCode === 86) { // 'v'key -> the positive rotation of joint3
@@ -148,15 +152,11 @@ class App extends WebGLApp {
     if (ev.keyCode === 67) { // 'c'key -> the nagative rotation of joint3
       if (this.g_joint3Angle > -60.0) this.g_joint3Angle = (this.g_joint3Angle - ANGLE_STEP) % 360;
     }
+
     this.draw();
   }
 
   process() {
-    // this.normalMatrix.setInverseOf(this.modelMatrix);
-    // this.normalMatrix.transpose();
-    // this.gl.uniformMatrix4fv(this.u_NormalMatrix, false, this.normalMatrix.elements);
-    // this.gl.uniformMatrix4fv(this.u_ModelMatrix, false, this.modelMatrix.elements);
-    // this.draw();
   }
 
   draw() {
@@ -169,7 +169,7 @@ class App extends WebGLApp {
     );
 
     this.projMatrix.setPerspective(
-      30, // fov y
+      50, // fov y
       this.canvas.width / this.canvas.height, // aspect ratio of the frustum
       1, // near plane
       100, // far plane
@@ -181,18 +181,46 @@ class App extends WebGLApp {
     // base
     const baseHeight = 2;
     this.g_modelMatrix.setTranslate(0.0, -12.0, 0.0);
-    this.drawBox();
+    this.drawBox(10.0, baseHeight, 10.0);
 
     // Arm1
-    const arm1Length = 10.0; // Length of arm1
+    const arm1Length = 10.0;
+    this.g_modelMatrix.translate(0.0, baseHeight, 0.0); // Move onto the base
+    this.g_modelMatrix.rotate(this.g_arm1Angle, 0.0, 1.0, 0.0); // Rotate around the y-axis
+    this.drawBox(3.0, arm1Length, 3.0);
+
+    // Arm2
+    const arm2Length = 10.0;
     this.g_modelMatrix.translate(0.0, arm1Length, 0.0); // Move to joint1
     this.g_modelMatrix.rotate(this.g_joint1Angle, 0.0, 0.0, 1.0); // Rotate around the z-axis
-    this.g_modelMatrix.scale(1.3, 1.0, 1.3); // Make it a little thicker
-    this.drawBox();
+    this.drawBox(4.0, arm2Length, 4.0); // Draw
+
+    // A palm
+    const palmLength = 2.0;
+    this.g_modelMatrix.translate(0.0, arm2Length, 0.0); // Move to palm
+    this.g_modelMatrix.rotate(this.g_joint2Angle, 0.0, 1.0, 0.0); // Rotate around the y-axis
+    this.drawBox(2.0, palmLength, 6.0); // Draw
+
+    // Move to the center of the tip of the palm
+    this.g_modelMatrix.translate(0.0, palmLength, 0.0);
+
+    // Draw finger1
+    this.pushMatrix(this.g_modelMatrix);
+    this.g_modelMatrix.translate(0.0, 0.0, 2.0);
+    this.g_modelMatrix.rotate(this.g_joint3Angle, 1.0, 0.0, 0.0); // Rotate around the x-axis
+    this.drawBox(1.0, 2.0, 1.0);
+    this.g_modelMatrix = this.popMatrix();
+
+    // Draw finger2
+    this.g_modelMatrix.translate(0.0, 0.0, -2.0);
+    this.g_modelMatrix.rotate(-this.g_joint3Angle, 1.0, 0.0, 0.0); // Rotate around the x-axis
+    this.drawBox(1.0, 2.0, 1.0);
   }
 
-  // Draw the cube
-  drawBox() {
+  drawBox(width, height, depth) {
+    this.pushMatrix(this.g_modelMatrix); // Save the model matrix
+    // Scale a cube and draw
+    this.g_modelMatrix.scale(width, height, depth);
     // Calculate the model view project matrix and pass it to u_MvpMatrix
     this.g_mvpMatrix.set(this.projMatrix);
     this.g_mvpMatrix.multiply(this.g_modelMatrix);
@@ -203,16 +231,28 @@ class App extends WebGLApp {
     this.gl.uniformMatrix4fv(this.u_NormalMatrix, false, this.g_normalMatrix.elements);
     // Draw
     this.gl.drawElements(this.gl.TRIANGLES, this.n, this.gl.UNSIGNED_BYTE, 0);
+    this.g_modelMatrix = this.popMatrix(); // Retrieve the model matrix
+  }
+
+  pushMatrix(m) {
+    if (this.g_matrixStack === undefined) this.g_matrixStack = [];
+    const m2 = new Matrix4(m);
+    this.g_matrixStack.push(m2);
+  }
+
+  popMatrix() {
+    if (this.g_matrixStack === undefined) return null;
+    return this.g_matrixStack.pop();
   }
 
   static initVertices() {
     const vertices = new Float32Array([
-      1.5, 10.0, 1.5, -1.5, 10.0, 1.5, -1.5, 0.0, 1.5, 1.5, 0.0, 1.5, // v0-v1-v2-v3 front
-      1.5, 10.0, 1.5, 1.5, 0.0, 1.5, 1.5, 0.0, -1.5, 1.5, 10.0, -1.5, // v0-v3-v4-v5 right
-      1.5, 10.0, 1.5, 1.5, 10.0, -1.5, -1.5, 10.0, -1.5, -1.5, 10.0, 1.5, // v0-v5-v6-v1 up
-      -1.5, 10.0, 1.5, -1.5, 10.0, -1.5, -1.5, 0.0, -1.5, -1.5, 0.0, 1.5, // v1-v6-v7-v2 left
-      -1.5, 0.0, -1.5, 1.5, 0.0, -1.5, 1.5, 0.0, 1.5, -1.5, 0.0, 1.5, // v7-v4-v3-v2 down
-      1.5, 0.0, -1.5, -1.5, 0.0, -1.5, -1.5, 10.0, -1.5, 1.5, 10.0, -1.5, // v4-v7-v6-v5 back
+      0.5, 1.0, 0.5, -0.5, 1.0, 0.5, -0.5, 0.0, 0.5, 0.5, 0.0, 0.5, // v0-v1-v2-v3 front
+      0.5, 1.0, 0.5, 0.5, 0.0, 0.5, 0.5, 0.0, -0.5, 0.5, 1.0, -0.5, // v0-v3-v4-v5 right
+      0.5, 1.0, 0.5, 0.5, 1.0, -0.5, -0.5, 1.0, -0.5, -0.5, 1.0, 0.5, // v0-v5-v6-v1 up
+      -0.5, 1.0, 0.5, -0.5, 1.0, -0.5, -0.5, 0.0, -0.5, -0.5, 0.0, 0.5, // v1-v6-v7-v2 left
+      -0.5, 0.0, -0.5, 0.5, 0.0, -0.5, 0.5, 0.0, 0.5, -0.5, 0.0, 0.5, // v7-v4-v3-v2 down
+      0.5, 0.0, -0.5, -0.5, 0.0, -0.5, -0.5, 1.0, -0.5, 0.5, 1.0, -0.5, // v4-v7-v6-v5 back
     ]);
 
     // Normal
@@ -246,7 +286,8 @@ class App extends WebGLApp {
   addNotes() {
     const el = document.getElementsByClassName('notes').item(0);
     el.innerHTML = `Use UP/DOWN to rotate the joint.<br>
-    Use LEFT/RIGHT to rotate the arm.`;
+    Use LEFT/RIGHT to rotate the arm. <br>
+    Try also Z X V C.`;
   }
 }
 
